@@ -173,6 +173,7 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+const HOST = '0.0.0.0';
+app.listen(PORT, HOST, () => {
   console.log(`在庫管理サーバーが起動しました: http://localhost:${PORT}`);
 });
