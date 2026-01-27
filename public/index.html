@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>古着在庫管理システム</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>古着在庫管理システム</h1>
+  </header>
+
+  <main>
+    <!-- 統計情報 -->
+    <section class="stats">
+      <div class="stat-card">
+        <span class="stat-value" id="totalProducts">0</span>
+        <span class="stat-label">商品数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="totalStock">0</span>
+        <span class="stat-label">総在庫数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="totalValue">¥0</span>
+        <span class="stat-label">在庫総額</span>
+      </div>
+      <div class="stat-card warning">
+        <span class="stat-value" id="lowStock">0</span>
+        <span class="stat-label">在庫少</span>
+      </div>
+    </section>
+
+    <!-- 検索・フィルター -->
+    <section class="filters">
+      <input type="text" id="searchInput" placeholder="商品名・ブランド・メモで検索">
+      <select id="categoryFilter">
+        <option value="">全カテゴリ</option>
+      </select>
+      <button onclick="loadProducts()" class="btn">検索</button>
+      <button onclick="showAddModal()" class="btn btn-primary">+ 商品登録</button>
+    </section>
+
+    <!-- 商品一覧 -->
+    <section class="products">
+      <table id="productsTable">
+        <thead>
+          <tr>
+            <th>商品名</th>
+            <th>ブランド</th>
+            <th>カテゴリ</th>
+            <th>サイズ</th>
+            <th>状態</th>
+            <th>仕入価格</th>
+            <th>販売価格</th>
+            <th>在庫数</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="productsBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- 商品登録/編集モーダル -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modalTitle">商品登録</h2>
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label>商品名 *</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+          <label>ブランド</label>
+          <input type="text" id="brand">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>カテゴリ *</label>
+            <select id="category" required></select>
+          </div>
+          <div class="form-group">
+            <label>サイズ</label>
+            <input type="text" id="size" placeholder="S/M/L/XL等">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>状態 *</label>
+          <select id="condition" required>
+            <option value="新品同様">新品同様</option>
+            <option value="美品">美品</option>
+            <option value="良好">良好</option>
+            <option value="使用感あり">使用感あり</option>
+            <option value="難あり">難あり</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>仕入価格 *</label>
+            <input type="number" id="purchase_price" required min="0">
+          </div>
+          <div class="form-group">
+            <label>販売価格 *</label>
+            <input type="number" id="selling_price" required min="0">
+          </div>
+        </div>
+        <div class="form-group" id="stockQuantityGroup">
+          <label>初期在庫数</label>
+          <input type="number" id="stock_quantity" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>メモ</label>
+          <textarea id="notes" rows="2"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 入出庫モーダル -->
+  <div id="stockModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeStockModal()">&times;</span>
+      <h2 id="stockModalTitle">入庫処理</h2>
+      <form id="stockForm" onsubmit="processStock(event)">
+        <input type="hidden" id="stockProductId">
+        <input type="hidden" id="stockType">
+        <p id="stockProductName" class="product-name"></p>
+        <p id="currentStock" class="current-stock"></p>
+        <div class="form-group">
+          <label>数量 *</label>
+          <input type="number" id="stockQuantity" required min="1" value="1">
+        </div>
+        <div class="form-group">
+          <label>メモ</label>
+          <input type="text" id="stockNotes" placeholder="入出庫理由など">
+        </div>
+        <button type="submit" class="btn btn-primary">実行</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
