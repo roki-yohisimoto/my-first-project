@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google NotebookLM 研修資料</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #1a1a2e;
+    color: #333;
+  }
+
+  .slide {
+    width: 960px;
+    height: 540px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    overflow: hidden;
+    position: relative;
+    page-break-after: always;
+  }
+
+  /* ===== Slide 1: Title ===== */
+  .slide-1 {
+    background: linear-gradient(135deg, #4285F4 0%, #0F9D58 50%, #F4B400 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-align: center;
+  }
+  .slide-1 .logo {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+  .slide-1 h1 {
+    font-size: 42px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .slide-1 .subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    opacity: 0.95;
+    margin-bottom: 32px;
+  }
+  .slide-1 .meta {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  /* ===== Slide 2: Agenda ===== */
+  .slide-2 {
+    display: flex;
+  }
+  .slide-2 .side-bar {
+    width: 8px;
+    background: linear-gradient(180deg, #4285F4, #0F9D58);
+  }
+  .slide-2 .content {
+    padding: 48px 56px;
+    flex: 1;
+  }
+  .slide-2 h2 {
+    font-size: 28px;
+    color: #4285F4;
+    margin-bottom: 28px;
+    font-weight: 700;
+  }
+  .slide-2 .agenda-list {
+    list-style: none;
+    counter-reset: agenda;
+  }
+  .slide-2 .agenda-list li {
+    counter-increment: agenda;
+    font-size: 18px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .slide-2 .agenda-list li::before {
+    content: counter(agenda);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #4285F4;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ===== Common header style ===== */
+  .header-bar {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 48px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .header-blue { background: #4285F4; }
+  .header-green { background: #0F9D58; }
+  .header-yellow { background: #F4B400; color: #333; }
+  .header-red { background: #DB4437; }
+  .header-teal { background: #00897B; }
+  .header-purple { background: #7B1FA2; }
+  .header-indigo { background: #3F51B5; }
+  .header-dark { background: #263238; }
+
+  .body-content {
+    padding: 32px 48px;
+  }
+
+  /* ===== Slide 3: What is NotebookLM ===== */
+  .slide-3 .body-content {
+    display: flex;
+    gap: 40px;
+  }
+  .slide-3 .left-col {
+    flex: 1;
+  }
+  .slide-3 .right-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .slide-3 h3 {
+    font-size: 20px;
+    color: #4285F4;
+    margin-bottom: 16px;
+  }
+  .slide-3 p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+  }
+  .feature-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f0f7ff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    border-left: 4px solid #4285F4;
+  }
+  .feature-badge .icon { font-size: 24px; }
+  .feature-badge .text { font-size: 14px; font-weight: 500; color: #333; }
+
+  /* ===== Slide 4: Key Features ===== */
+  .slide-4 .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    padding: 28px 48px;
+  }
+  .feature-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .feature-card .f-icon { font-size: 36px; margin-bottom: 12px; }
+  .feature-card h4 { font-size: 16px; color: #333; margin-bottom: 8px; }
+  .feature-card p { font-size: 12px; color: #777; line-height: 1.6; }
+  .feature-card.highlight {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border: 2px solid #0F9D58;
+  }
+
+  /* ===== Slide 5: How to Use ===== */
+  .slide-5 .steps {
+    display: flex;
+    gap: 16px;
+    padding: 24px 48px;
+  }
+  .step-box {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+  .step-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #4285F4;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+  }
+  .step-box h4 { font-size: 15px; color: #333; margin-bottom: 8px; }
+  .step-box p { font-size: 12px; color: #666; line-height: 1.5; }
+  .step-arrow {
+    position: absolute;
+    right: -16px;
+    top: 24px;
+    font-size: 24px;
+    color: #ccc;
+  }
+
+  /* ===== Slide 6: Business Use Cases ===== */
+  .slide-6 .use-cases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 24px 48px;
+  }
+  .use-case {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .use-case .uc-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .use-case h4 { font-size: 15px; color: #333; margin-bottom: 4px; }
+  .use-case p { font-size: 12px; color: #666; line-height: 1.5; }
+
+  /* ===== Slide 7: Strengths ===== */
+  .slide-7 .strengths {
+    display: flex;
+    gap: 24px;
+    padding: 28px 48px;
+  }
+  .strength-item {
+    flex: 1;
+    text-align: center;
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+  .strength-item:nth-child(1) { background: #e8f0fe; }
+  .strength-item:nth-child(2) { background: #e6f4ea; }
+  .strength-item:nth-child(3) { background: #fef7e0; }
+  .strength-item .s-icon { font-size: 40px; margin-bottom: 12px; }
+  .strength-item h4 { font-size: 16px; color: #333; margin-bottom: 8px; }
+  .strength-item p { font-size: 13px; color: #555; line-height: 1.6; }
+
+  /* ===== Slide 8: Pricing ===== */
+  .slide-8 .pricing {
+    display: flex;
+    gap: 24px;
+    padding: 24px 48px;
+    align-items: stretch;
+  }
+  .plan-card {
+    flex: 1;
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-align: center;
+    border: 2px solid #e0e0e0;
+  }
+  .plan-card.free { border-color: #4285F4; }
+  .plan-card.plus { border-color: #0F9D58; background: #e6f4ea; }
+  .plan-card.enterprise { border-color: #F4B400; }
+  .plan-card h4 { font-size: 18px; margin-bottom: 8px; }
+  .plan-card .price { font-size: 28px; font-weight: 900; color: #333; margin-bottom: 12px; }
+  .plan-card .price span { font-size: 14px; font-weight: 400; color: #888; }
+  .plan-card ul { list-style: none; text-align: left; }
+  .plan-card ul li {
+    font-size: 13px;
+    padding: 6px 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+  }
+  .plan-card ul li::before {
+    content: "✓ ";
+    color: #0F9D58;
+    font-weight: 700;
+  }
+
+  /* ===== Slide 9: Cautions ===== */
+  .slide-9 .caution-list {
+    padding: 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .caution-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: #fff3e0;
+    border-left: 4px solid #F4B400;
+  }
+  .caution-item .c-icon { font-size: 28px; flex-shrink: 0; }
+  .caution-item h4 { font-size: 15px; color: #333; margin-bottom: 4px; }
+  .caution-item p { font-size: 13px; color: #666; line-height: 1.5; }
+
+  /* ===== Slide 10: Summary ===== */
+  .slide-10 {
+    background: linear-gradient(135deg, #263238 0%, #37474F 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide-10 .body-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .slide-10 h2 {
+    font-size: 32px;
+    margin-bottom: 24px;
+    font-weight: 900;
+  }
+  .slide-10 .summary-points {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .summary-point {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px 24px;
+    width: 200px;
+  }
+  .summary-point .sp-icon { font-size: 32px; margin-bottom: 8px; }
+  .summary-point h4 { font-size: 15px; margin-bottom: 4px; }
+  .summary-point p { font-size: 12px; opacity: 0.8; }
+  .slide-10 .cta {
+    font-size: 20px;
+    font-weight: 700;
+    color: #F4B400;
+  }
+  .slide-10 .footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 12px;
+    opacity: 0.5;
+  }
+
+  /* Slide number */
+  .slide-num {
+    position: absolute;
+    bottom: 12px;
+    right: 20px;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; }
+    .slide {
+      margin: 0;
+      box-shadow: none;
+      border-radius: 0;
+      page-break-after: always;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== SLIDE 1: タイトル ========== -->
+<div class="slide slide-1">
+  <div class="logo">📓</div>
+  <h1>Google NotebookLM 研修</h1>
+  <p class="subtitle">〜 生成AIで変わる情報整理・ナレッジ活用の新しいカタチ 〜</p>
+  <p class="meta">2026年3月 ｜ 社内研修資料</p>
+</div>
+
+<!-- ========== SLIDE 2: アジェンダ ========== -->
+<div class="slide slide-2">
+  <div class="side-bar"></div>
+  <div class="content">
+    <h2>本日のアジェンダ</h2>
+    <ol class="agenda-list">
+      <li>NotebookLM とは？</li>
+      <li>主要な機能紹介</li>
+      <li>基本的な使い方（4ステップ）</li>
+      <li>ビジネス活用事例</li>
+      <li>NotebookLM の強み</li>
+      <li>料金プラン</li>
+      <li>利用時の注意点</li>
+      <li>まとめ & ネクストステップ</li>
+    </ol>
+  </div>
+  <span class="slide-num">2 / 10</span>
+</div>
+
+<!-- ========== SLIDE 3: NotebookLMとは ========== -->
+<div class="slide slide-3">
+  <div class="header-bar header-blue">NotebookLM とは？</div>
+  <div class="body-content">
+    <div class="left-col">
+      <h3>Googleが提供するAIナレッジアシスタント</h3>
+      <p>
+        NotebookLMは、ユーザーがアップロードした資料<strong>だけ</strong>を情報源として、
+        AIが要約・質問応答・分析を行うツールです。<br><br>
+        最新のGeminiモデルを搭載し、100万トークンのコンテキストウィンドウにより
+        大量の資料を一括で分析できます。<br><br>
+        <strong>Googleアカウントがあれば無料で利用開始</strong>できるため、
+        導入ハードルが非常に低いのが特徴です。
+      </p>
+    </div>
+    <div class="right-col">
+      <div class="feature-badge"><span class="icon">📄</span><span class="text">PDF / Word / テキスト</span></div>
+      <div class="feature-badge"><span class="icon">🌐</span><span class="text">Webサイト / URL</span></div>
+      <div class="feature-badge"><span class="icon">🎥</span><span class="text">YouTube動画</span></div>
+      <div class="feature-badge"><span class="icon">🎵</span><span class="text">音声ファイル（MP3等）</span></div>
+      <div class="feature-badge"><span class="icon">📊</span><span class="text">Google Workspace連携</span></div>
+      <div class="feature-badge"><span class="icon">🖼️</span><span class="text">画像ファイル（JPEG/PNG）</span></div>
+    </div>
+  </div>
+  <span class="slide-num">3 / 10</span>
+</div>
+
+<!-- ========== SLIDE 4: 主要機能 ========== -->
+<div class="slide slide-4">
+  <div class="header-bar header-green">主要な機能紹介</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="f-icon">🎙️</div>
+      <h4>音声解説<br>(Audio Overview)</h4>
+      <p>AIホスト2人が資料を対話形式で解説する音声を自動生成。80言語以上対応。通勤中の学習にも最適。</p>
+    </div>
+    <div class="feature-card">
+      <div class="f-icon">🎬</div>
+      <h4>動画解説<br>(Video Overview)</h4>
+      <p>資料の要点をビジュアル付き解説動画として自動生成。YouTubeやSNSでの共有にも便利。</p>
+    </div>
+    <div class="feature-card highlight">
+      <div class="f-icon">🧠</div>
+      <h4>マインドマップ</h4>
+      <p>資料の内容を視覚的に整理。複雑な情報の関係性を一目で把握。チーム共有にも活用可能。</p>
+    </div>
+    <div class="feature-card">
+      <div class="f-icon">📊</div>
+      <h4>インフォグラフィック<br>生成</h4>
+      <p>ソース資料を「一目でわかる」図解に自動変換。2025年12月に追加された新機能。</p>
+    </div>
+    <div class="feature-card">
+      <div class="f-icon">📑</div>
+      <h4>スライド生成<br>& エクスポート</h4>
+      <p>プロンプト指示で個別スライドまで微修正可能。PowerPoint形式でダウンロードも可。</p>
+    </div>
+    <div class="feature-card">
+      <div class="f-icon">🔍</div>
+      <h4>Deep Research</h4>
+      <p>複雑なテーマについて多角的な調査を自動実行。統合レポートを数分で生成。</p>
+    </div>
+  </div>
+  <span class="slide-num">4 / 10</span>
+</div>
+
+<!-- ========== SLIDE 5: 使い方 ========== -->
+<div class="slide slide-5">
+  <div class="header-bar header-teal">基本的な使い方（4ステップ）</div>
+  <div class="steps">
+    <div class="step-box">
+      <div class="step-circle">1</div>
+      <h4>ノートブック作成</h4>
+      <p>notebooklm.google.com にアクセスし、新しいノートブックを作成します</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">2</div>
+      <h4>ソースを追加</h4>
+      <p>PDF、URL、動画、音声など最大300のソースをアップロードします</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">3</div>
+      <h4>AIに質問・指示</h4>
+      <p>チャットで質問したり、要約・分析・比較などを依頼します</p>
+      <span class="step-arrow">→</span>
+    </div>
+    <div class="step-box">
+      <div class="step-circle">4</div>
+      <h4>成果物を活用</h4>
+      <p>音声・動画・スライド・マインドマップなど多様な形式で出力・共有</p>
+    </div>
+  </div>
+  <div style="padding: 16px 48px;">
+    <div style="background: #e0f2f1; border-radius: 8px; padding: 16px 24px; display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 24px;">💡</span>
+      <span style="font-size: 14px; color: #00695c;"><strong>ポイント：</strong>NotebookLMはアップロードされた資料のみを情報源とするため、ハルシネーション（AI の誤情報生成）のリスクが大幅に低減されます。</span>
+    </div>
+  </div>
+  <span class="slide-num">5 / 10</span>
+</div>
+
+<!-- ========== SLIDE 6: ビジネス活用事例 ========== -->
+<div class="slide slide-6">
+  <div class="header-bar header-purple">ビジネス活用事例</div>
+  <div class="use-cases">
+    <div class="use-case">
+      <span class="uc-icon">📋</span>
+      <div>
+        <h4>会議議事録の要約</h4>
+        <p>長時間の会議録から決定事項・担当者・期限・未決タスクを自動で整理。議事録作成時間を大幅削減。</p>
+      </div>
+    </div>
+    <div class="use-case">
+      <span class="uc-icon">🔎</span>
+      <div>
+        <h4>リサーチ・資料の要点抽出</h4>
+        <p>複数の資料やWebサイトを一括投入し、要点を自動抽出。調査レポート作成を効率化。</p>
+      </div>
+    </div>
+    <div class="use-case">
+      <span class="uc-icon">📚</span>
+      <div>
+        <h4>社内ナレッジベースの構築</h4>
+        <p>部門別のAIアシスタントを手軽に作成。新人研修やFAQ対応にも活用可能。</p>
+      </div>
+    </div>
+    <div class="use-case">
+      <span class="uc-icon">📈</span>
+      <div>
+        <h4>企業調査・市場分析</h4>
+        <p>IR資料やWebサイトをアップロードして企業概要・事業内容を迅速分析。会議前準備に最適。</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">6 / 10</span>
+</div>
+
+<!-- ========== SLIDE 7: 強み ========== -->
+<div class="slide slide-7">
+  <div class="header-bar header-indigo">NotebookLM の強み</div>
+  <div class="strengths">
+    <div class="strength-item">
+      <div class="s-icon">🛡️</div>
+      <h4>ハルシネーションが少ない</h4>
+      <p>資料にない情報は「答えない」制限があるため、AIが勝手に情報を作り出すリスクが低い。ビジネス利用に安心。</p>
+    </div>
+    <div class="strength-item">
+      <div class="s-icon">📎</div>
+      <h4>出典が明確</h4>
+      <p>回答には必ず元データの引用リンクが付くため、情報の根拠を即座に確認可能。レポートや提案書の信頼性向上に貢献。</p>
+    </div>
+    <div class="strength-item">
+      <div class="s-icon">🔒</div>
+      <h4>プライバシー保護</h4>
+      <p>アップロードデータはAIモデルのトレーニングに使用されない（Google公式発表）。企業の機密情報も安心。</p>
+    </div>
+  </div>
+  <span class="slide-num">7 / 10</span>
+</div>
+
+<!-- ========== SLIDE 8: 料金プラン ========== -->
+<div class="slide slide-8">
+  <div class="header-bar header-yellow">料金プラン</div>
+  <div class="pricing">
+    <div class="plan-card free">
+      <h4 style="color:#4285F4;">無料プラン</h4>
+      <div class="price">¥0<span> / 月</span></div>
+      <ul>
+        <li>Googleアカウントで即利用開始</li>
+        <li>基本的な要約・質問応答</li>
+        <li>音声解説・動画解説</li>
+        <li>マインドマップ生成</li>
+        <li>個人利用に最適</li>
+      </ul>
+    </div>
+    <div class="plan-card plus">
+      <h4 style="color:#0F9D58;">NotebookLM Plus</h4>
+      <div class="price">$19.99<span> / 月</span></div>
+      <ul>
+        <li>ソース量が無料版の6倍</li>
+        <li>ノートブック数が5倍</li>
+        <li>年払い $200/年（約16%割引）</li>
+        <li>優先サポート</li>
+        <li>チーム利用に推奨</li>
+      </ul>
+    </div>
+    <div class="plan-card enterprise">
+      <h4 style="color:#E65100;">Enterprise</h4>
+      <div class="price">要問合せ</div>
+      <ul>
+        <li>VPC Service Controls対応</li>
+        <li>IAMによるアクセス制御</li>
+        <li>データのリージョン限定保存</li>
+        <li>管理者ダッシュボード</li>
+        <li>大規模組織向け</li>
+      </ul>
+    </div>
+  </div>
+  <span class="slide-num">8 / 10</span>
+</div>
+
+<!-- ========== SLIDE 9: 注意点 ========== -->
+<div class="slide slide-9">
+  <div class="header-bar header-red">利用時の注意点</div>
+  <div class="caution-list">
+    <div class="caution-item">
+      <span class="c-icon">⚠️</span>
+      <div>
+        <h4>機密情報の取り扱い</h4>
+        <p>顧客情報や契約書、個人情報など機密性の高い資料のアップロードは社内規定を確認の上、慎重に判断してください。情報管理ルールの明確化が必要です。</p>
+      </div>
+    </div>
+    <div class="caution-item">
+      <span class="c-icon">🔄</span>
+      <div>
+        <h4>最新情報の反映にはソース更新が必要</h4>
+        <p>NotebookLMはアップロードされた資料のみを参照します。最新情報を反映するには、定期的にソースを更新・追加する運用が必要です。</p>
+      </div>
+    </div>
+    <div class="caution-item">
+      <span class="c-icon">✅</span>
+      <div>
+        <h4>出力結果の確認は必須</h4>
+        <p>ハルシネーションは少ないものの、AIの出力は必ず人間が確認・検証してください。特に重要な意思決定に使用する場合は、出典元の原文も確認しましょう。</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">9 / 10</span>
+</div>
+
+<!-- ========== SLIDE 10: まとめ ========== -->
+<div class="slide slide-10">
+  <div class="body-content">
+    <h2>まとめ & ネクストステップ</h2>
+    <div class="summary-points">
+      <div class="summary-point">
+        <div class="sp-icon">🚀</div>
+        <h4>まず使ってみる</h4>
+        <p>無料でGoogleアカウントから即開始</p>
+      </div>
+      <div class="summary-point">
+        <div class="sp-icon">📄</div>
+        <h4>業務資料を投入</h4>
+        <p>議事録・マニュアル・レポートから試す</p>
+      </div>
+      <div class="summary-point">
+        <div class="sp-icon">👥</div>
+        <h4>チームで共有</h4>
+        <p>ノートブックをURL共有して活用拡大</p>
+      </div>
+    </div>
+    <p class="cta">今日からNotebookLMで業務を変革しましょう！</p>
+  </div>
+  <div class="footer">Google NotebookLM 社内研修資料 ｜ 2026年3月</div>
+  <span class="slide-num" style="color:#666;">10 / 10</span>
+</div>
+
+</body>
+</html>
